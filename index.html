@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operation Vietnam — Explorer's Field Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:ital,wght@0,400;0,700;0,800;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --silk:#FFF7EC;
+  --ink:#22304A;
+  --ink-soft:#5A6880;
+  --lantern:#FF5A3C;
+  --marigold:#FFC53D;
+  --jade:#2FA98C;
+  --river:#1F7AE0;
+  --royal:#7A4FBF;
+  --night:#1B2A4A;
+  --card:#FFFFFF;
+  --stamp-size:108px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--silk);
+  color:var(--ink);
+  font-family:'Nunito',system-ui,sans-serif;
+  font-size:17px;line-height:1.55;
+  background-image:radial-gradient(#f3e4c8 1.2px, transparent 1.2px);
+  background-size:26px 26px;
+}
+h1,h2,h3{font-family:'Lilita One',system-ui,sans-serif;font-weight:400;letter-spacing:.5px}
+.mono{font-family:'Space Mono',monospace}
+
+/* ---------- sticky progress bar ---------- */
+#topbar{
+  position:sticky;top:0;z-index:50;
+  background:var(--night);color:#fff;
+  padding:10px 16px;display:flex;align-items:center;gap:14px;
+  box-shadow:0 3px 14px rgba(27,42,74,.35);
+}
+#topbar .label{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;white-space:nowrap}
+#progressTrack{flex:1;height:14px;background:rgba(255,255,255,.15);border-radius:99px;overflow:hidden}
+#progressFill{height:100%;width:0%;border-radius:99px;
+  background:linear-gradient(90deg,var(--lantern),var(--marigold));
+  transition:width .6s cubic-bezier(.6,-0.2,.3,1.4)}
+#stampCount{font-family:'Space Mono',monospace;font-size:13px;white-space:nowrap}
+
+/* ---------- sticky date navigator ---------- */
+#datenav{
+  position:sticky;top:34px;z-index:49;
+  background:rgba(27,42,74,.97);
+  backdrop-filter:blur(6px);
+  border-top:1px solid rgba(255,255,255,.08);
+  box-shadow:0 4px 12px rgba(27,42,74,.25);
+  overflow:hidden;
+}
+#datenavInner{
+  display:flex;gap:7px;overflow-x:auto;padding:8px 12px;
+  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.3) transparent;
+  -webkit-overflow-scrolling:touch;scroll-behavior:smooth;
+}
+#datenavInner::-webkit-scrollbar{height:5px}
+#datenavInner::-webkit-scrollbar-thumb{background:rgba(255,255,255,.3);border-radius:9px}
+.dnav-pill{
+  flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-width:52px;padding:5px 9px;border-radius:12px;cursor:pointer;
+  background:rgba(255,255,255,.08);border:2px solid transparent;
+  font-family:'Space Mono',monospace;color:#cdd6ec;
+  transition:all .15s ease;text-align:center;line-height:1.1;
+}
+.dnav-pill:hover{background:rgba(255,255,255,.16)}
+.dnav-pill b{font-size:15px;font-family:'Lilita One';color:#fff}
+.dnav-pill small{font-size:9px;letter-spacing:.5px;margin-top:1px;white-space:nowrap;opacity:.8}
+.dnav-pill .emo{font-size:15px;margin-bottom:1px}
+.dnav-pill.active{border-color:var(--marigold);background:rgba(255,197,61,.18)}
+.dnav-pill.done b{color:var(--jade)}
+.dnav-pill.done::after{content:"✓";position:absolute;font-size:9px}
+.dnav-pill.today{border-color:var(--lantern);background:rgba(255,90,60,.22)}
+
+@media (max-width:620px){
+  #datenav{top:32px}
+  .dnav-pill{min-width:46px;padding:4px 7px}
+  .dnav-pill b{font-size:13px}
+}
+
+/* ---------- hero ---------- */
+header.hero{
+  background:linear-gradient(160deg,var(--night) 0%,#2c3f6b 60%,#41316b 100%);
+  color:#fff;text-align:center;padding:56px 20px 72px;position:relative;overflow:hidden;
+}
+.lanterns{position:absolute;inset:0;pointer-events:none;font-size:34px;opacity:.9}
+.lanterns span{position:absolute;top:-10px;animation:sway 4s ease-in-out infinite alternate;display:inline-block;transform-origin:top center}
+@keyframes sway{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+.hero .eyebrow{font-family:'Space Mono',monospace;font-size:13px;letter-spacing:3px;color:var(--marigold);text-transform:uppercase}
+.hero h1{font-size:clamp(38px,7vw,68px);margin:10px 0 6px;text-shadow:0 4px 0 rgba(0,0,0,.25)}
+.hero h1 .vn{color:var(--lantern);-webkit-text-stroke:0}
+.hero .sub{max-width:560px;margin:0 auto;font-size:18px;color:#e8ecf7}
+.route{font-family:'Space Mono',monospace;font-size:13px;margin-top:16px;color:var(--marigold)}
+
+/* countdown */
+#countdown{display:flex;gap:12px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+.cd-box{background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.25);
+  border-radius:14px;padding:10px 14px;min-width:76px}
+.cd-box b{font-family:'Lilita One';font-size:32px;display:block;color:var(--marigold)}
+.cd-box small{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase}
+#tripStatus{margin-top:14px;font-family:'Space Mono',monospace;font-size:14px;color:#ffd98a}
+
+/* ---------- city chapter headers ---------- */
+.chapter{max-width:860px;margin:0 auto;padding:0 16px}
+.city-head{
+  display:flex;align-items:center;gap:14px;margin:54px 0 10px;
+}
+.city-head .flag{font-size:40px}
+.city-head h2{font-size:clamp(26px,5vw,40px);color:var(--accent,var(--lantern))}
+.city-head .nights{font-family:'Space Mono',monospace;font-size:12px;background:var(--accent,var(--lantern));
+  color:#fff;padding:4px 10px;border-radius:99px;letter-spacing:1px}
+.city-sub{color:#5A6880;margin-bottom:8px;font-size:16px}
+
+/* ---------- day cards ---------- */
+.day-card{
+  background:var(--card);border-radius:22px;margin:26px 0;position:relative;
+  border:3px solid #efe3cd;
+  box-shadow:0 8px 0 rgba(34,48,74,.08);
+  overflow:hidden;
+}
+.day-card.today{border-color:var(--marigold);box-shadow:0 0 0 4px rgba(255,197,61,.35),0 8px 0 rgba(34,48,74,.08)}
+.today-badge{position:absolute;top:14px;left:14px;z-index:3;background:var(--marigold);color:var(--night);
+  font-family:'Space Mono',monospace;font-weight:700;font-size:12px;padding:5px 12px;border-radius:99px;
+  letter-spacing:1px;animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+.photo{height:220px;position:relative;background:linear-gradient(135deg,var(--accent,var(--lantern)),var(--night));
+  display:flex;align-items:center;justify-content:center;overflow:hidden}
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.photo .fallback{font-size:84px;filter:drop-shadow(0 6px 8px rgba(0,0,0,.3))}
+.photo .credit{position:absolute;bottom:6px;right:10px;font-size:10px;color:rgba(255,255,255,.85);
+  background:rgba(0,0,0,.35);padding:2px 8px;border-radius:99px;font-family:'Space Mono',monospace}
+
+.card-body{padding:20px 22px 26px}
+.date-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.date-pill{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:1px;
+  background:var(--night);color:#fff;padding:4px 12px;border-radius:99px}
+.city-pill{font-family:'Space Mono',monospace;font-size:12px;color:var(--accent,var(--lantern));
+  border:2px solid var(--accent,var(--lantern));padding:2px 10px;border-radius:99px}
+.day-card h3{font-size:clamp(22px,4.5vw,30px);margin:10px 0 2px;color:var(--ink)}
+.tagline{color:#5A6880;font-style:italic;margin-bottom:14px}
+
+/* plan timeline */
+.sect{font-family:'Lilita One';font-size:16px;letter-spacing:1px;color:var(--accent,var(--lantern));
+  text-transform:uppercase;margin:16px 0 6px}
+.plan{border-left:3px dashed var(--accent,var(--lantern));margin-left:8px;padding-left:0}
+.plan-row{display:flex;align-items:flex-start;gap:10px;padding:6px 0 6px 14px;position:relative}
+.plan-row::before{content:"";position:absolute;left:-7.5px;top:14px;width:12px;height:12px;border-radius:50%;
+  background:var(--accent,var(--lantern));border:3px solid #fff;box-shadow:0 0 0 2px var(--accent,var(--lantern))}
+.ptime{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;background:var(--accent,var(--lantern));
+  color:#fff;padding:3px 9px;border-radius:8px;white-space:nowrap;margin-top:2px}
+.ptxt{font-size:15.5px;line-height:1.45}
+.ptxt b{color:var(--ink)}
+.ptxt .pw{color:#5A6880}
+
+/* optional alternatives */
+.alts{list-style:none;margin:6px 0 2px}
+.alts li{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;margin:6px 0;
+  background:#F3EFFA;border-radius:12px;font-size:15px;border-left:4px solid var(--royal)}
+.alts li .star{color:var(--royal);font-size:12px;margin-top:4px;flex:0 0 auto}
+
+/* checklist */
+.missions{list-style:none;margin:8px 0 4px}
+.missions li{
+  display:flex;align-items:flex-start;gap:12px;padding:10px 12px;margin:7px 0;
+  background:#FBF4E6;border-radius:14px;cursor:pointer;user-select:none;
+  border:2px solid transparent;transition:all .18s ease;
+}
+.missions li:hover{border-color:var(--accent,var(--lantern))}
+.missions li .box{
+  width:26px;height:26px;flex:0 0 26px;border-radius:8px;border:3px solid var(--accent,var(--lantern));
+  background:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;
+  transition:all .15s ease;margin-top:1px;
+}
+.missions li.done{background:#eef8f2;border-color:var(--jade)}
+.missions li.done .box{background:var(--jade);border-color:var(--jade)}
+.missions li.done .txt{text-decoration:line-through;color:#7d8aa0}
+
+/* fun fact + quotes */
+.funfact{
+  margin-top:14px;background:linear-gradient(120deg,#FFF3D6,#ffe9b8);
+  border-left:6px solid var(--marigold);border-radius:12px;padding:12px 14px;font-size:15.5px;
+}
+.funfact b{font-family:'Lilita One';letter-spacing:.5px;color:#8a6100}
+.quote{margin-top:12px;border-radius:14px;padding:13px 15px;font-size:15.5px;position:relative}
+.quote.real{background:#EAF3FF;border-left:6px solid var(--river)}
+.quote.kid{background:#F4EDFF;border-left:6px solid var(--royal)}
+.quote .who{display:block;margin-top:6px;font-family:'Space Mono',monospace;font-size:11.5px;color:#5A6880;letter-spacing:.5px}
+
+/* ---------- passport stamp (signature element) ---------- */
+.stamp-slot{
+  position:absolute;top:150px;right:14px;width:var(--stamp-size);height:var(--stamp-size);z-index:4;
+  pointer-events:none;
+}
+.stamp{
+  width:100%;height:100%;border-radius:50%;
+  border:3.5px dashed var(--accent,var(--lantern));
+  color:var(--accent,var(--lantern));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  font-family:'Space Mono',monospace;font-weight:700;font-size:10.5px;letter-spacing:1px;line-height:1.25;
+  background:rgba(255,255,255,.88);
+  transform:rotate(-12deg) scale(0);opacity:0;
+  transition:transform .35s cubic-bezier(.5,1.8,.4,.9),opacity .2s;
+  box-shadow:0 4px 10px rgba(0,0,0,.18);
+}
+.stamp .big{font-size:22px}
+.day-card.stamped .stamp{transform:rotate(-12deg) scale(1);opacity:1}
+.stamp-hint{position:absolute;top:150px;right:14px;width:var(--stamp-size);height:var(--stamp-size);border-radius:50%;
+  border:3px dashed rgba(34,48,74,.18);display:flex;align-items:center;justify-content:center;
+  font-family:'Space Mono',monospace;font-size:9.5px;color:rgba(34,48,74,.4);text-align:center;line-height:1.3;padding:10px}
+.day-card.stamped .stamp-hint{display:none}
+
+/* ---------- passport wall ---------- */
+#passport{
+  max-width:860px;margin:70px auto 30px;padding:30px 22px 40px;
+  background:linear-gradient(160deg,#20315a,#41316b);
+  border-radius:26px;color:#fff;text-align:center;position:relative;
+}
+#passport h2{font-size:clamp(28px,5vw,40px);color:var(--marigold)}
+#passport p{color:#dbe2f5;max-width:520px;margin:8px auto 22px}
+.stamp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:14px}
+.pstamp{
+  aspect-ratio:1;border-radius:50%;border:3px dashed rgba(255,255,255,.28);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:'Space Mono',monospace;font-size:9.5px;color:rgba(255,255,255,.35);letter-spacing:1px;line-height:1.3;
+  transition:all .3s ease;
+}
+.pstamp .big{font-size:24px;filter:grayscale(1);opacity:.4}
+.pstamp.earned{border-style:solid;color:#fff;background:rgba(255,255,255,.1);transform:rotate(-8deg)}
+.pstamp.earned .big{filter:none;opacity:1}
+#allDone{display:none;margin-top:24px;font-size:22px;font-family:'Lilita One';color:var(--marigold)}
+#passport.complete #allDone{display:block;animation:pulse 1.2s infinite}
+
+footer{max-width:860px;margin:0 auto;padding:14px 22px 60px;font-size:13px;color:#7d8aa0;text-align:center}
+footer .mono{font-size:11.5px}
+
+@media (max-width:620px){
+  .photo{height:180px}
+  :root{--stamp-size:88px}
+  .stamp-slot,.stamp-hint{top:118px;right:10px}
+  body{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <span class="label">🧭 MISSION PROGRESS</span>
+  <div id="progressTrack"><div id="progressFill"></div></div>
+  <span id="stampCount">0 / 22 stamps</span>
+</div>
+
+<div id="datenav"><div id="datenavInner"></div></div>
+
+<header class="hero">
+  <div class="lanterns" aria-hidden="true">
+    <span style="left:6%;animation-delay:0s">🏮</span>
+    <span style="left:22%;animation-delay:.7s">🏮</span>
+    <span style="left:50%;animation-delay:.3s">🏮</span>
+    <span style="left:74%;animation-delay:1s">🏮</span>
+    <span style="left:91%;animation-delay:.5s">🏮</span>
+  </div>
+  <div class="eyebrow">Top-secret explorer's field guide</div>
+  <h1>OPERATION<br><span class="vn">VIETNAM</span> 🇻🇳</h1>
+  <p class="sub">22 days. 6 beds. 1 night train. Roughly one million noodles.<br>Your mission: stamp every single day of this adventure.</p>
+  <div class="route">HANOI → NINH BINH → 🚆 → HUE → DA NANG → HOI AN → HANOI</div>
+  <div id="countdown"></div>
+  <div id="tripStatus"></div>
+</header>
+
+<main id="guide"></main>
+
+<section id="passport">
+  <h2>🛂 Your Adventure Passport</h2>
+  <p>Tick off every mission in a day to slam a stamp on it. Stamps land here too. Fill all 22 to complete Operation Vietnam!</p>
+  <div class="stamp-grid" id="stampGrid"></div>
+  <div id="allDone">🎉 MISSION COMPLETE — LEGENDARY EXPLORER STATUS UNLOCKED 🎉</div>
+</section>
+
+<footer>
+  <p>Photos are real places pulled directly from Wikimedia Commons and linked straight into this page — they'll load with any normal internet connection, no live lookups required.</p>
+  <p class="mono">💬 Blue "Travelers say" cards are paraphrased from real traveler reviews. Purple "Junior Explorer Club" quotes are imagined for fun. Mission progress is saved to a GitHub Gist and shared — tick a box on any phone and it updates for everyone who opens this same link. There's no login screen, so anyone with the page link (or who inspects the code) could technically edit the checklist — fine for a family trip, just don't reuse this token for anything sensitive.</p>
+</footer>
+<script>
+/* ================= DATA ================= */
+const CITIES = {
+  hanoi:  {name:"Hanoi", flag:"🏮", accent:"#FF5A3C", nights:"5 NIGHTS", sub:"Motorbike madness, magic lakes and the best street food on Earth."},
+  ninh:   {name:"Ninh Binh", flag:"🐉", accent:"#2FA98C", nights:"3 NIGHTS", sub:"Dragon mountains, secret caves and boats rowed with FEET."},
+  train:  {name:"The Night Train", flag:"🚆", accent:"#7A4FBF", nights:"1 NIGHT ON RAILS", sub:"Your hotel room has wheels tonight."},
+  hue:    {name:"Hue", flag:"👑", accent:"#B8860B", nights:"3 NIGHTS", sub:"Emperors, dragon boats and tombs blingier than any palace."},
+  danang: {name:"Da Nang", flag:"🌊", accent:"#1F7AE0", nights:"3 NIGHTS", sub:"Beach city with a fire-breathing bridge and a road above the clouds."},
+  hoian:  {name:"Hoi An", flag:"🎐", accent:"#F49D1A", nights:"4 NIGHTS", sub:"The prettiest town in Vietnam — 10,000 lanterns can't be wrong."},
+  home:   {name:"Grand Finale", flag:"🏁", accent:"#FF5A3C", nights:"LAST NIGHT", sub:"One more lap of Hanoi, then home as heroes."}
+};
+
+const DAYS = [
+{d:"2026-07-08", label:"WED 8 JUL", city:"hanoi", emoji:"✈️", wiki:null,
+ img:null, alts:null, title:"Blast-off!", tag:"Wheels up 18:55 — next stop, the other side of the planet.",
+ plan:[{t:"16:00",p:"Home → Heathrow",w:"bags, passports, excitement"},{t:"18:55",p:"Take-off ✈️",w:"non-stop to Hanoi"},{t:"20:00",p:"Cruising altitude",w:"dinner, movie marathon, sleep"}],
+ missions:["Passport, tickets, teddy — final check ✅","Claim your movie lineup for the flight","Learn your first words: “Xin chào!” (sin CHOW) = hello!","Take one photo of the clouds from the window","Sleep… you'll wake up in tomorrow"],
+ fact:"Vietnam is 6 hours ahead of London — this flight is basically a TIME MACHINE. You take off Tuesday evening and land on Wednesday.",
+ quote:{type:"kid", text:"I told the flight attendant 'xin chào' and she taught me three more words. I'm basically fluent now.", who:"— Junior Explorer Club ✦ imagined"}},
+
+{d:"2026-07-09", label:"THU 9 JUL", city:"hanoi", emoji:"🐢", wiki:"Hoàn Kiếm Lake", wikiAlt:"Hanoi",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/Turtle_Tower%2C_Hoan_Kiem_Lake%2C_Hanoi%2C_Vietnam_%288120856071%29.jpg?width=1000", alts:["St Joseph's Cathedral — Hanoi's neo-gothic 'mini Notre-Dame', beautifully lit at night","Ngoc Son Temple — meet the giant preserved lake turtle inside the island shrine","Egg coffee or egg hot-chocolate at a cosy lakeside café","A slow lake lap watching locals play badminton and dance at dusk","Hang Gai 'silk street' — window-shop the lanterns and silk scarves","Sunset on a lakeside bench with a bag of street snacks"], title:"Landing Day: The Lake of the Returned Sword", tag:"Easy start — jet lag is real, but so is ice cream.",
+ plan:[{t:"13:00",p:"Land at Noi Bai Airport",w:"car to the Old Quarter (~40 min)"},{t:"15:00",p:"May de Ville Hotel",w:"check in, shower, short rest"},{t:"17:00",p:"Hoan Kiem Lake",w:"lake loop, red bridge, Ngoc Son Temple"},{t:"19:00",p:"Bún chả dinner",w:"Hanoi's signature grilled-pork noodles"},{t:"20:30",p:"Kem Tràng Tiền",w:"victory ice cream, then early night"}],
+ missions:["Survive your first Hanoi street crossing (walk slow + steady, the bikes flow around you!)","Spot the Turtle Tower in the middle of the lake","Cross the bright red Huc Bridge to the island temple","First dinner: bún chả — grilled pork + noodles + magic sauce","Victory ice cream at Kem Tràng Tiền (since 1958!)"],
+ fact:"Legend says a giant golden turtle god lives in this lake. A hero borrowed a magic sword to win a war — then the turtle rose up and took it back. Real giant softshell turtles ACTUALLY lived here.",
+ quote:{type:"real", text:"Travelers say crossing the road in Hanoi feels like a real-life video game — scary for ten seconds, then weirdly fun forever.", who:"— paraphrased from traveler reviews"}},
+
+{d:"2026-07-10", label:"FRI 10 JUL", city:"hanoi", emoji:"🍜", wiki:"Temple of Literature, Hanoi", wikiAlt:"Văn Miếu",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/20220605_Temple_of_Literature%2C_Hanoi_02.jpg?width=1000", alts:["Bach Ma Temple — the oldest temple in the Old Quarter, hidden among the shops","Dong Xuan Market — Hanoi's huge multi-floor indoor market","Thang Long Imperial Citadel — a UNESCO site with dragon staircases and archaeology","Spot the skinny 'tube houses' on an Old Quarter architecture wander","Fresh sugarcane juice at a busy street corner","A French-colonial bakery stop for pastries"], title:"Ancient University + Street Food Quest", tag:"1,000-year-old school in the morning, eating championship at night.",
+ plan:[{t:"08:00",p:"Temple of Literature",w:"explore the 1,000-year-old university"},{t:"10:00",p:"Café Giảng",w:"egg coffee / egg hot chocolate"},{t:"11:30",p:"Hotel",w:"AC + rest through the midday heat"},{t:"16:30",p:"Old Quarter",w:"guided street food tour (≈3 hrs)"},{t:"20:00",p:"Weekend Night Market",w:"opens tonight — wander home through it"}],
+ missions:["Find the stone turtles carrying graduates' names (900 years of top students!)","Compare: Temple of Literature vs. the back of a 100,000₫ banknote — it's ON the money","Try egg coffee (or the hot-chocolate version — trust us)","Street food tour: taste at least 3 dishes you've never heard of","Say “Ngon quá!” (ngon WA) = SO delicious — watch faces light up"],
+ fact:"The Temple of Literature opened as a university in 1076 — that's about 900 years before your school existed. Students who passed the royal exams got their names carved on stone turtles forever.",
+ quote:{type:"real", text:"Reviewers of Hanoi food tours say the same thing over and over: they arrived nervous, ate things they couldn't pronounce, and it was the best meal of the whole trip.", who:"— paraphrased from traveler reviews"}},
+
+{d:"2026-07-11", label:"SAT 11 JUL", city:"hanoi", emoji:"🚂", wiki:"Ho Chi Minh Mausoleum", wikiAlt:"Hanoi",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/Train_street%2C_Hanoi_4.jpg?width=1000", alts:["One Pillar Pagoda — a tiny 1,000-year-old temple balanced on a single stone pillar","Vietnam Military History Museum — real tanks, planes and helicopters to walk around","Presidential Palace gardens & carp pond behind the stilt house","Ho Chi Minh Museum — a big, modern, interactive museum next door","B-52 Lake — the wreck of a bomber still sitting in a little city pond","West Lake detour to Tran Quoc Pagoda, Hanoi's oldest"], title:"History Morning + TRAIN STREET", tag:"Tonight a real train passes an arm's length from your café table.",
+ plan:[{t:"07:30",p:"Ho Chi Minh Mausoleum",w:"mausoleum, stilt house, One Pillar Pagoda"},{t:"10:00",p:"Museum of Ethnology",w:"climb into real stilt houses"},{t:"12:30",p:"Hotel",w:"lunch + rest"},{t:"17:30",p:"Train Street",w:"café seat trackside — owner escorts you in"},{t:"18:30",p:"THE TRAIN",w:"evening trains pass ~18:30–19:45 (staff confirm)"},{t:"20:00",p:"Old Quarter",w:"dinner + wander"}],
+ missions:["Visit Ho Chi Minh's simple stilt house (he refused the palace!)","Climb inside a real stilt house at the Museum of Ethnology","Get a track-side café seat on Train Street (a café owner walks you in)","When the whistle blows: tuck in, hold still, feel the WHOOSH","Film it — but keep every toe behind the line!"],
+ fact:"On Train Street, the train squeezes past houses with less than a metre to spare. Locals fold up their chairs, the whole street holds its breath… then goes right back to dinner.",
+ quote:{type:"real", text:"Visitors describe the wind from the passing train ruffling their hair, everyone screaming and laughing at once — many call it their #1 memory of Hanoi.", who:"— paraphrased from traveler reviews"}},
+
+{d:"2026-07-12", label:"SUN 12 JUL", city:"hanoi", emoji:"🏺", wiki:"Water puppetry", wikiAlt:"Thăng Long Water Puppet Theatre",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/Thang_Long_Water_Puppet_Theatre2.JPG?width=1000", alts:["Hanoi Ceramic Mosaic Mural — the world's longest ceramic mural, along the dyke road","Long Bien Bridge — walk part of the 100-year-old French iron bridge over the Red River","Bat Trang's porcelain market — stalls of bowls, cups and animals to hunt through","Thang Long Imperial Citadel — dragon steps and ancient foundations","Bat Trang's 'Bảo tàng' ceramic museum — a swirly modern building shaped like clay","Weekend night-market snack crawl around the lake"], title:"Pottery Wheel + Dancing Puppets on Water", tag:"Make something with your hands, then watch puppets breathe fire.",
+ plan:[{t:"09:00",p:"Bat Trang village",w:"pottery wheel + paint your piece"},{t:"13:00",p:"Hotel",w:"lunch + rest"},{t:"16:00",p:"Hoan Kiem (car-free)",w:"weekend street games around the lake"},{t:"20:00",p:"Thang Long Theatre",w:"water puppet show (50 min)"},{t:"21:00",p:"Night Market",w:"last lap + snacks"}],
+ missions:["Throw your own pot on the wheel at Bat Trang village","Paint it your colours — it flies home with you","Play giant street games at the car-free lake (weekends only!)","Water puppet show: spot the fire-breathing dragon","Figure out the mystery: HOW do the puppets move?!"],
+ fact:"Water puppetry was invented ~1,000 years ago by rice farmers in flooded fields. The puppeteers stand waist-deep in water BEHIND the screen, steering the puppets with hidden underwater poles.",
+ quote:{type:"kid", text:"My pot came out wonky. I'm calling it 'abstract art' and charging my brother £5 to look at it.", who:"— Junior Explorer Club ✦ imagined"}},
+
+{d:"2026-07-13", label:"MON 13 JUL", city:"hanoi", emoji:"👩‍🍳", wiki:"Phở", wikiAlt:"Vietnamese cuisine",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/Chicken-pho-vietnamese-soup.JPG?width=1000", alts:["Hoa Lo Prison — the 'Hanoi Hilton', a powerful, well-told history museum","Vietnamese Women's Museum — surprisingly great, all about daily life and legends","National Museum of Vietnamese History — treasures in a grand colonial building","Hang Gai silk street — pick out a tailored scarf or souvenir","The Metropole Hotel — peek at the historic wartime bomb-shelter tour","A rooftop café for one more lake-view sunset"], title:"Chef Training Day", tag:"Shop the market, cook the feast, eat your homework.",
+ plan:[{t:"09:00",p:"Wet market + cooking class",w:"shop, cook, eat your own lunch"},{t:"14:00",p:"Free choice",w:"Hoa Lo Prison museum or silk-street shopping"},{t:"18:00",p:"Rooftop bar/café",w:"sunset over the lake"},{t:"19:30",p:"Old Quarter",w:"final Hanoi dinner + pack for Ninh Binh"}],
+ missions:["Pick the herbs and veggies at a real wet market","Roll spring rolls tighter than Dad's","Cook a real bowl of phở (say it: “fuh”)","Official Chief Taste-Tester duties","Memorise one recipe to cook back home"],
+ fact:"Phở is Vietnam's national dish — noodle soup eaten for BREAKFAST. The broth simmers for hours and hours; the best cooks guard their recipe like a state secret.",
+ quote:{type:"real", text:"Families who take Hanoi cooking classes say the market visit is the secret star — kids come home bargaining for vegetables like pros.", who:"— paraphrased from traveler reviews"}},
+
+{d:"2026-07-14", label:"TUE 14 JUL", city:"ninh", emoji:"🚴", wiki:"Tam Cốc-Bích Động", wikiAlt:"Ninh Bình",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/Tam_Coc_-_Ninh_Binh.jpg?width=1000", alts:["Bai Dinh Pagoda — one of the biggest temple complexes in Southeast Asia","Thung Nham Bird Park — thousands of birds flying home to roost at dusk","Am Tien Cave ('Tuyet Tinh Coc') — a hidden emerald pond inside a rock crater","Bich Dong Pagoda — climb deeper into all three cliff-built tiers","Sunset photos from the rice-paddy dykes on the bikes","A local goat-and-crispy-rice tasting in Tam Coc village"], title:"Into Dragon Country", tag:"Goodbye traffic, hello mountains that look like sleeping dragons.",
+ plan:[{t:"09:00",p:"Drive south",w:"Hanoi → Tam Coc (~2 hrs)"},{t:"12:00",p:"Tam Coc Retreat",w:"check in, lunch, pool"},{t:"16:00",p:"Bike ride",w:"paddies + Bich Dong cliff pagoda"},{t:"18:00",p:"Rice fields",w:"golden-hour photos"},{t:"19:30",p:"Tam Coc village",w:"goat specialties + crispy cơm cháy"}],
+ missions:["Spot your first karst mountain from the car — shout it!","Check in, cannonball the pool","Golden-hour bike ride through glowing green rice paddies","Climb to Bich Dong, the pagoda built INTO a cliff (find all 3 levels)","Wave at a water buffalo 🐃"],
+ fact:"These wild limestone towers are 250 million years old — they used to be the bottom of an ancient ocean. You're cycling on a prehistoric seabed.",
+ quote:{type:"kid", text:"The rice fields are SO green it looks like someone turned the saturation up to 100.", who:"— Junior Explorer Club ✦ imagined"}},
+
+{d:"2026-07-15", label:"WED 15 JUL", city:"ninh", emoji:"🐉", wiki:"Tràng An Scenic Landscape Complex", wikiAlt:"Tràng An",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/Mua_Cave%2C_Ninh_Binh%2C_Vietnam%2C_20240202_0926_4964.jpg?width=1000", alts:["Tam Coc boat ride — the other river, rowed by ladies using their FEET","Thai Vi Temple — a quiet old temple hidden among the rice fields (bike stop)","Galaxy Cave (Thien Ha) — a cave that glitters like a starry sky","The Kong: Skull Island film-set village inside Trang An","Bich Dong Pagoda — the three-tier cliff temple, if you didn't do it yesterday","A lazy swing-and-hammock afternoon back at the retreat pool"], title:"Dragon Ridge + Cave Boats", tag:"The biggest view of the trip, then a boat ride THROUGH mountains.",
+ plan:[{t:"06:30",p:"Hang Mua",w:"climb ~500 steps to the dragon ridge"},{t:"09:00",p:"Retreat",w:"big breakfast + pool morning"},{t:"15:30",p:"Trang An",w:"rowing-boat through the caves (~3 hrs)"},{t:"19:00",p:"Tam Coc",w:"dinner + stargazing"}],
+ missions:["Conquer all ~500 steps up Hang Mua (early = cool + empty)","Photo with the stone dragon on the ridge — best view in Vietnam","Trang An boat: glide through at least 3 caves","DUCK! (the cave ceilings get seriously low)","Spot the wild mountain goats on the cliffs"],
+ fact:"The movie Kong: Skull Island (2017) was filmed right here in Trang An — Hollywood decided this valley looked exactly like a lost world. They were right.",
+ quote:{type:"real", text:"Travelers consistently say the same two things about Hang Mua: the steps are brutal in the heat, and the view from the dragon makes them forget the steps instantly.", who:"— paraphrased from traveler reviews"}},
+
+{d:"2026-07-16", label:"THU 16 JUL", city:"ninh", emoji:"🐒", wiki:"Delacour's langur", wikiAlt:"Cúc Phương National Park",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/Langur_de_Delacour.jpg?width=1000", alts:["Van Long Nature Reserve — a silent, motor-free boat trip and more langur-spotting","Bai Dinh Pagoda — if you didn't make it on arrival day","Cuc Phuong Botanical Garden — jungle trails and giant butterflies","A guided night-wildlife walk in the national park","The pheasant & wildlife conservation centre near the primate rescue","A picnic outside the Cave of Prehistoric Man"], title:"Jungle Rescue Mission", tag:"Meet monkeys wearing white shorts. Seriously.",
+ plan:[{t:"08:30",p:"Cuc Phuong NP",w:"Primate Rescue Center + Turtle Center"},{t:"11:00",p:"Jungle walk",w:"1,000-year-old tree + prehistoric cave"},{t:"14:00",p:"Retreat",w:"pool championship"},{t:"19:00",p:"Tam Coc",w:"easy dinner, early night"}],
+ missions:["Meet the rescued langurs and gibbons at the Primate Rescue Center","Visit turtle HQ — some of the rarest turtles on the planet","Find the 1,000-year-old giant tree","Explore the Cave of Prehistoric Man (people lived here 7,500+ years ago)","Evening: biggest pool session of the trip"],
+ fact:"The Delacour's langur looks like it's wearing fluffy white shorts — and there are only a few hundred left in the world. The centre you're visiting rescues them from poachers and raises their babies.",
+ quote:{type:"kid", text:"A baby gibbon looked me dead in the eyes and I have simply never been the same.", who:"— Junior Explorer Club ✦ imagined"}},
+
+{d:"2026-07-17", label:"FRI 17 JUL", city:"train", emoji:"🚆", wiki:"North–South railway (Vietnam)", wikiAlt:"Reunification Express",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/VIETNAMESE_RAILWAYS_TULICO_TOURIST_CAR_NIGHT_SLEEPER_TRAIN_HANOI_B_STATION_TO_LAO_CAI_NORTHERN_VIETNAM_FEB_2012_%286869485364%29.jpg?width=1000", alts:["Hoa Lu ancient capital — Vietnam's 10th-century capital, Dinh & Le temples","Van Long boat trip — glassy water and karst reflections, if skipped yesterday","One last wander of the lotus and koi ponds at Mua Mountain's foot","Souvenir shopping and embroidery stalls in Tam Coc village","A pre-train spa massage to relax before the sleeper","A final easy bike loop through the paddies"], title:"The Lotus Night Train", tag:"Fall asleep in the north, wake up in the imperial south.",
+ plan:[{t:"09:00",p:"Retreat",w:"lazy pool morning, pack up"},{t:"12:30",p:"Lunch",w:"+ optional Hoa Lu ancient capital after"},{t:"17:00",p:"Snack shopping",w:"assemble the Official Train Picnic"},{t:"19:00",p:"Lotus night train",w:"board, claim bunks, cards"},{t:"21:30",p:"Bunk time",w:"fall asleep to the rails"}],
+ missions:["Lazy morning: pool, hammock, zero rushing","Assemble the official Train Picnic (snacks = mission critical)","Claim your bunk and build your nest","Family card game championship as Vietnam rolls past","Wake up early enough to watch sunrise from your pillow"],
+ fact:"You're riding the famous Reunification Railway — 1,726 km of track connecting Hanoi to Ho Chi Minh City, rebuilt after the war. Sleeping on a moving train is a bucket-list classic.",
+ quote:{type:"real", text:"Travelers say Vietnam's sleeper trains feel like a slumber party crossed with a road movie — the clackety-clack rocks you to sleep whether you like it or not.", who:"— paraphrased from traveler reviews"}},
+
+{d:"2026-07-18", label:"SAT 18 JUL", city:"hue", emoji:"🛕", wiki:"Thiên Mụ Pagoda", wikiAlt:"Huế",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/Hue_Vietnam_Thien-Mu-Temple-and-Pagoda-03.jpg?width=1000", alts:["Dong Ba Market — Hue's buzzing riverside market, great for snacks","Museum of Royal Antiquities — thrones, robes and imperial treasures","Hue walking street & pedestrian night market by the river","Bao Quoc Pagoda — a hilltop temple with quiet city views","A cyclo (pedicab) ride around the huge Citadel walls","A riverside chè (sweet-soup) tasting at a night stall"], title:"Hello Hue: Dragon Boats & Golden Hour", tag:"Recover like royalty, then cruise the Perfume River at sunset.",
+ plan:[{t:"08:00",p:"Arrive Hue",w:"transfer to Pilgrimage Village resort"},{t:"11:00",p:"Resort",w:"pool + recovery nap"},{t:"16:30",p:"Perfume River",w:"dragon boat to Thien Mu Pagoda for sunset"},{t:"19:30",p:"Hue town",w:"bún bò Huế + lit-up Truong Tien Bridge"}],
+ missions:["Arrive by train like a proper adventurer","Cannonball inspection of the new pool","Ride a dragon boat up the Perfume River 🐲","Count all 7 tiers of Thien Mu Pagoda","Dinner mission: bún bò Huế — the emperor of noodle soups (mild spice available!)"],
+ fact:"Hue was Vietnam's imperial capital for 143 years. The Perfume River got its name because flowers from orchards upstream drift down in autumn and scent the water.",
+ quote:{type:"kid", text:"I rode a DRAGON to a TOWER. Casual Saturday.", who:"— Junior Explorer Club ✦ imagined"}},
+
+{d:"2026-07-19", label:"SUN 19 JUL", city:"hue", emoji:"👑", wiki:"Imperial City of Huế", wikiAlt:"Huế",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/Vietnam%2C_Hue%2C_Imperial_City_of_Hue%2C_The_Meridian_Gate.jpg?width=1000", alts:["A royal-cuisine dinner — tiny imperial dishes, with dress-up available","Tomb of Minh Mang — the grandest, most classical of all the royal tombs","Thuy Xuan conical-hat workshop — make your own hat next to the incense","The Nine Holy Cannons — giant bronze guardian cannons at the Citadel gates","An Dinh Palace — the last emperor's dazzling European-style palace","Dieu De Pagoda and a stroll around Tinh Tam royal lake"], title:"Inside the Forbidden Purple City", tag:"Walk where only emperors were allowed. You're basically royalty now.",
+ plan:[{t:"07:30",p:"Imperial Citadel",w:"gates, palaces, Forbidden Purple City (~3 hrs)"},{t:"11:30",p:"Resort",w:"pool through the heat"},{t:"16:00",p:"Thuy Xuan village",w:"roll incense + conical hats, then Tomb of Tu Duc"},{t:"19:30",p:"Dong Ba market",w:"street-stall dinner"}],
+ missions:["Enter through the giant Ngo Mon gate like an empress","Find the Nine Dynastic Urns — one giant bronze urn per emperor","Spot war scars vs. shiny restored palaces — history detective work","Afternoon: roll your own incense sticks at the rainbow incense village","Conical hat photo shoot 👒"],
+ fact:"13 emperors ruled Vietnam from inside these walls. Ordinary people were banned from the innermost 'Purple Forbidden City' — sneaking in could cost you your head. Today: just a ticket.",
+ quote:{type:"real", text:"Visitors to the incense village love that it's hands-on — you leave smelling of cinnamon with rainbow photos and a bundle you rolled yourself.", who:"— paraphrased from traveler reviews"}},
+
+{d:"2026-07-20", label:"MON 20 JUL", city:"hue", emoji:"💎", wiki:"Tomb of Khải Định", wikiAlt:"Khải Định",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/The_tomb_of_Emperor_Khai_Dinh_%2812060688173%29.jpg?width=1000", alts:["Tomb of Minh Mang — huge, symmetrical, ringed by lakes and pines","Tu Hieu Pagoda — a serene working monastery among the pines","Thanh Toan folk museum — old farm tools and village life by the tile bridge","Tomb of Tu Duc — the poet-emperor's lakeside retreat","Hon Chen Temple — a colourful riverside shrine reached by boat","Buffalo-and-paddy photo stops on the countryside cycle"], title:"The Bling Tomb + Dessert Quest", tag:"An emperor's tomb made of broken porcelain — then you judge Hue's 30 desserts.",
+ plan:[{t:"08:30",p:"Tomb of Khai Dinh",w:"dragon stairs + the porcelain palace"},{t:"11:00",p:"Resort",w:"pool + lunch"},{t:"16:00",p:"Countryside cycle",w:"villages to Thanh Toan covered bridge"},{t:"19:00",p:"Hue town",w:"chè dessert crawl + pack for the coast"}],
+ missions:["Climb the dragon staircases of Khai Dinh's tomb","Ceiling hunt: find the nine dragons painted above the emperor","Count how many THOUSANDS of porcelain pieces cover one wall (impossible — try anyway)","Cycle to the old Thanh Toan covered bridge through the villages","Chè dessert crawl: taste at least 3, crown a winner 🍧"],
+ fact:"Emperor Khai Dinh's tomb took 11 YEARS to build and is decorated with millions of pieces of smashed porcelain and glass, arranged into dragons and flowers. It's the most extra tomb in Vietnam.",
+ quote:{type:"kid", text:"Chè is basically dessert soup with treasure at the bottom. Vietnam thought of everything.", who:"— Junior Explorer Club ✦ imagined"}},
+
+{d:"2026-07-21", label:"TUE 21 JUL", city:"danang", emoji:"🛣️", wiki:"Hải Vân Pass", wikiAlt:"Da Nang",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/Deo_Hai_Van%2C_or_the_Hai_Van_Pass_%2831654304962%29.jpg?width=1000", alts:["Elephant Springs (Suoi Voi) — natural rock pools you can swim in","Lang Co Beach — a long white-sand stop below the pass","Lap An Lagoon — oyster shacks perched on stilts over the water","Hai Van Quan — climb the old stone gate-fort at the very summit","Da Nang's Dragon Bridge — spot the giant dragon lit up at night","The Han River promenade & the carp-turning-into-dragon statue"], title:"The Road Above the Clouds", tag:"One of the greatest drives on Earth ends at the beach.",
+ plan:[{t:"09:00",p:"Hai Van Pass",w:"scenic drive — Lap An lagoon + summit bunkers"},{t:"13:00",p:"Minh Boutique, Da Nang",w:"check in + lunch"},{t:"15:30",p:"My Khe beach",w:"first ocean swim 🌊"},{t:"19:00",p:"Beachfront",w:"pick-your-own seafood dinner"}],
+ missions:["Hai Van Pass: spot the moment mountains meet the sea","Explore the old war bunkers at the summit","Photo stop at the mirror-flat Lap An lagoon","FIRST OCEAN SWIM at My Khe beach 🌊","Seafood dinner: pick your own fish/prawns from the tank"],
+ fact:"Hải Vân means 'Sea of Clouds' — the pass is so high the road sometimes sits above the cloud line. Top Gear once called this stretch one of the best coast roads in the world.",
+ quote:{type:"real", text:"Travelers say the pass turns a boring transfer day into a highlight — bunkers, buffalo, and views that make everyone go quiet.", who:"— paraphrased from traveler reviews"}},
+
+{d:"2026-07-22", label:"WED 22 JUL", city:"danang", emoji:"🌉", wiki:"Bà Nà Hills", wikiAlt:"Golden Bridge (Vietnam)",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/The_Golden_Bridge%2C_Ba_Na_Hills%2C_Vietnam.jpg?width=1000", alts:["Linh Ung Pagoda — a giant white Buddha standing in the clouds","Debay Wine Cellar — a spooky-cool 1923 cellar carved into the mountain","Le Jardin D'Amour — nine themed French flower gardens","Moon Castle — a multi-storey indoor games and wax-figure castle","The funicular railway that links the mountain's village levels","Catch a costumed parade or show in the French Village square"], title:"Golden Bridge & the Mountain of Fun", tag:"A bridge held by GIANT STONE HANDS. Plus an alpine coaster. Obviously.",
+ plan:[{t:"07:30",p:"Drive to Ba Na Hills",w:"beat the crowds and clouds"},{t:"09:00",p:"Golden Bridge",w:"walk the giant hands + French village"},{t:"11:00",p:"Fantasy Park",w:"alpine coaster + arcade battles"},{t:"16:00",p:"Cable car down",w:"back to Da Nang"},{t:"19:00",p:"Near hotel",w:"easy recovery dinner"}],
+ missions:["Ride one of the world's longest cable cars into the clouds","Walk the Golden Bridge across the giant hands 🖐️","Alpine coaster: loser buys the gelato","Fantasy Park arcade: defeat Dad at something","Explore the fake French village (in Vietnam, on a mountain — why not)"],
+ fact:"The Golden Bridge opened in 2018 and went viral instantly — a golden walkway held up by two colossal moss-covered stone hands, 1,400 m above sea level. The hands are sculpted, but your vertigo is real.",
+ quote:{type:"real", text:"Families rate Ba Na Hills a full-day win: kids remember the coaster and arcade as much as the famous bridge — and everyone says GO EARLY.", who:"— paraphrased from traveler reviews"}},
+
+{d:"2026-07-23", label:"THU 23 JUL", city:"danang", emoji:"⛰️", wiki:"Marble Mountains (Vietnam)", wikiAlt:"Da Nang",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/Marble_Mountains%2C_Vietnam.jpg?width=1000", alts:["Non Nuoc stone-carving village — watch artisans carve marble at the foot of the hills","Museum of Cham Sculpture — a perfect primer before My Son's ruins","Ban Co Peak — Son Tra's highest point, with a giant chess-playing god statue","Non Nuoc Beach — a swim stop right below the Marble Mountains","Vong Hai Dai — a sweeping ocean lookout on the peninsula","The 156-step climb up Thuy Son for the full panorama"], title:"Hell Cave, Sunbeam Cave & Monkey Mountain", tag:"Spooky caves before lunch, rare rainbow monkeys before dinner.",
+ plan:[{t:"07:00",p:"Marble Mountains",w:"Hell Cave, sunbeam cave, cliff pagodas"},{t:"12:00",p:"Beach / pool",w:"cool off + lunch"},{t:"16:30",p:"Son Tra peninsula",w:"Lady Buddha + coast views"},{t:"18:00",p:"Jungle roadside",w:"monkey-spotting at dusk"},{t:"19:30",p:"My An streets",w:"food-street dinner"}],
+ missions:["Dare each other into Am Phu — the 'Hell Cave' 😈","Find Huyen Khong cave, where sunbeams pour through the ceiling","Climb to a pagoda with a view over the whole coast","Visit the giant Lady Buddha on Son Tra peninsula","Dusk mission: spot the red-shanked douc — the world's most colourful monkey"],
+ fact:"The red-shanked douc wears orange leggings, white sleeves and grey mittens — scientists nickname it the 'costumed ape'. Son Tra peninsula is one of the last places on Earth to see them wild.",
+ quote:{type:"kid", text:"The Hell Cave has judgement statues and spooky tunnels. 10/10 would be judged again.", who:"— Junior Explorer Club ✦ imagined"}},
+
+{d:"2026-07-24", label:"FRI 24 JUL", city:"hoian", emoji:"🏮", wiki:"Hội An", wikiAlt:"Japanese Covered Bridge",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/The_Japanese_Bridge_dates_back_to_the_16th_or_17th_century_%2830961025764%29.jpg?width=1000", alts:["Fujian (Phuc Kien) Assembly Hall — dragons, incense coils and a sea-goddess temple","Tan Ky Old House — a 200-year-old merchant home you can walk through","Precious Heritage Museum — stunning free photo portraits of Vietnam's peoples","Quan Cong Temple — a vivid warrior-god temple beside the market","Museum of Folk Culture — old trades, tools and Hoi An daily life","A lantern-lit sampan boat glide on the Thu Bon River"], title:"The Lantern Town Lights Up", tag:"The single prettiest evening of the entire trip. Charge your camera.",
+ plan:[{t:"10:00",p:"Drive to Hoi An",w:"~45 min down the coast"},{t:"12:00",p:"Little Oasis",w:"check in, pool, lunch"},{t:"15:00",p:"Tailor visit",w:"get measured (fitting in 2 days)"},{t:"17:00",p:"Ancient Town",w:"Japanese Bridge + old houses + bánh mì"},{t:"20:00",p:"Thu Bon River",w:"lanterns on + release a wish boat"}],
+ missions:["Cross the 400-year-old Japanese Covered Bridge","Get measured at a tailor (custom outfit, made for YOU, ready in days)","Bánh mì Phượng taste test — a world-famous sandwich","Stay till dark: watch 1,000 lanterns switch on","Release a candle lantern boat on the river & make a wish"],
+ fact:"400 years ago Hoi An was one of Asia's busiest trading ports — Japanese, Chinese and Dutch ships everywhere. The whole town is now a UNESCO treasure, which is why it looks frozen in time.",
+ quote:{type:"real", text:"Travelers say photos don't prepare you for lantern hour — the river turns gold and even teenagers put their phones down. Briefly.", who:"— paraphrased from traveler reviews"}},
+
+{d:"2026-07-25", label:"SAT 25 JUL", city:"hoian", emoji:"🥥", wiki:"Cẩm Thanh", wikiAlt:"Hội An",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/Vietnamese_fishing_boat_05.jpg?width=1000", alts:["An Bang Beach — a cooling swim between the cooking and the evening show","Hoi An night market — the lantern stalls glowing across the bridge","Coconut-leaf craft — weave a grasshopper, ring or crown with a local","Taboo Bamboo workshop — see (and make) clever things from bamboo","A net-casting and crab-fishing demo in the coconut channels","Tra Que herb village — smell and taste the famous garden herbs"], title:"Spinning Basket Boats + Chef Level 2", tag:"Round boats, coconut jungles, and cooking your own lunch.",
+ plan:[{t:"08:30",p:"Coconut forest + class",w:"market, basket boats, cook your lunch"},{t:"14:00",p:"Little Oasis",w:"pool"},{t:"19:00",p:"Evening show",w:"Hoi An Memories — or Dragon Bridge fire show in Da Nang (21:00)"}],
+ missions:["Ride a round basket boat through the coconut forest","Ask your captain for THE SPIN 🌀 (hold on!)","Go crab-fishing with a stick and string","Cook Hoi An specialties — level up from Hanoi class","Evening: big outdoor spectacle show (or fire-breathing Dragon Bridge in Da Nang!)"],
+ fact:"Legend says round basket boats were invented to dodge a French tax on boats — fishermen argued 'this isn't a boat, it's a basket!' The tax collectors had no comeback.",
+ quote:{type:"kid", text:"Our boat captain spun us so fast I saw my whole life flash before my eyes. Immediately asked to go again.", who:"— Junior Explorer Club ✦ imagined"}},
+
+{d:"2026-07-26", label:"SUN 26 JUL", city:"hoian", emoji:"🗿", wiki:"Mỹ Sơn", wikiAlt:"Champa",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/2024_-_M%E1%BB%B9_S%C6%A1n_Sanctuary_Temple_E7_-_img_01.jpg?width=1000", alts:["Museum of Cham Sculpture — context for the ruins, if you skipped it earlier","Catch a live Cham dance performance at My Son (scheduled times)","Ride the little electric buggy deep into the My Son valley","Explore My Son's quieter Group G and H temple trails","Cua Dai Beach — an afternoon swim near Hoi An","A sunset lantern-boat wish on the river before the workshop"], title:"Lost Jungle Temples + Beach Afternoon", tag:"Indiana Jones morning, mermaid afternoon.",
+ plan:[{t:"06:30",p:"My Son Sanctuary",w:"sunrise raid on the jungle temples"},{t:"12:00",p:"Hoi An",w:"lunch back in town"},{t:"15:00",p:"An Bang beach",w:"swim + chill"},{t:"18:30",p:"Lantern workshop",w:"build your own silk lantern"},{t:"20:00",p:"Night market",w:"snacks + souvenirs"}],
+ missions:["Sunrise raid on My Son — 1,500-year-old jungle temples","Find the carvings of gods and dancers in the brick towers","Solve the mystery: how DO the bricks stick together?","Afternoon: An Bang beach — swim, dig, chill","Evening: build your own silk lantern to take home 🏮"],
+ fact:"My Son's towers were built by the Cham people from bricks joined with no visible mortar — and after 1,500 years, scientists still argue about exactly how they did it.",
+ quote:{type:"real", text:"Early-bird visitors say arriving at opening time means misty, empty ruins that feel properly 'lost world' — by 10am the magic (and shade) is gone.", who:"— paraphrased from traveler reviews"}},
+
+{d:"2026-07-27", label:"MON 27 JUL", city:"hoian", emoji:"🚲", wiki:"Paddy field", wikiAlt:"Hội An",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/Tam_Coc_-_Ninh_Binh.jpg?width=1000", alts:["Cam Kim Island — cycle over the bridge to a quiet wood-carving village","Kayak or SUP the coconut-forest channels at sunset","Tra Que herb village — plant and taste herbs with the farmers","An Bang Beach — a full, lazy beach day","A leisurely rice-paddy bike loop with buffalo photo-ops","A final tailor fitting and a last souvenir sweep of the Ancient Town"], title:"Free-Range Final Day", tag:"Your adventure, your rules. Choose wisely.",
+ plan:[{t:"09:00",p:"Paddy cycle",w:"ride to Tra Que herb village"},{t:"12:00",p:"Hoi An",w:"lunch"},{t:"15:00",p:"Your choice",w:"last beach/pool + final tailor pickup"},{t:"19:00",p:"Riverside",w:"farewell feast + last lantern walk"}],
+ missions:["Cycle the rice paddies to Tra Que herb village","Water buffalo photo (from a respectful distance, agreed?)","Final tailor fitting — the reveal! ✨","Last beach hour OR last pool hour (big decision)","Farewell riverside feast + one last lantern-lit walk"],
+ fact:"Tra Que farmers feed their herbs with algae scooped from the local river — locals swear it's why the mint and basil here taste better than anywhere else in Vietnam.",
+ quote:{type:"kid", text:"I have eaten noodles for 19 days straight and I would do 19 more. This is who I am now.", who:"— Junior Explorer Club ✦ imagined"}},
+
+{d:"2026-07-28", label:"TUE 28 JUL", city:"home", emoji:"🛍️", wiki:"Old Quarter, Hanoi", wikiAlt:"Hanoi",
+ img:"https://commons.wikimedia.org/wiki/Special:FilePath/Vietnam_-_Ha_No%C3%AF_-_lac_H%C3%B4_Ho%C3%A0n_Ki%C3%AAm_%281%29.JPG?width=1000", alts:["West Lake & Tran Quoc Pagoda — Hanoi's oldest pagoda on a sunset island","Train Street — one last whoosh, if it topped her list the first time","Long Bien Bridge — a farewell walk on the century-old iron bridge","Hanoi Opera House — a photo stop at the grand French colonial theatre","A final egg-coffee and street-food crawl of your favourites","A last-minute silk and souvenir sweep on Hang Gai street"], title:"Full Circle: Hanoi Finale", tag:"Back where it all began — but now you're a Vietnam expert.",
+ plan:[{t:"10:00",p:"Fly north",w:"Da Nang → Hanoi"},{t:"14:00",p:"Solaria Hotel",w:"check in"},{t:"16:00",p:"Hang Gai silk street",w:"souvenirs + one last egg coffee"},{t:"19:00",p:"Old Quarter",w:"the Official Family Phở Ranking Ceremony"},{t:"21:00",p:"Hoan Kiem Lake",w:"goodbye night lap"}],
+ missions:["Fly north — spot Ninh Binh's dragons from the plane?","One LAST egg coffee / egg hot-choc","Souvenir sweep on Hang Gai silk street","The Official Family Phở Ranking Ceremony 🏆","Night lap of Hoan Kiem Lake — say goodbye to the turtle god"],
+ fact:"You've now travelled roughly 1,000 km through Vietnam — further than London to Barcelona — by plane, car, bike, boat, basket boat, cable car, cyclo and sleeper train.",
+ quote:{type:"kid", text:"Three weeks ago I couldn't cross a Hanoi street. Today I did it while eating a bánh mì. Growth.", who:"— Junior Explorer Club ✦ imagined"}},
+
+{d:"2026-07-29", label:"WED 29 JUL", city:"home", emoji:"🏆", wiki:null,
+ img:null, alts:null, title:"Mission Complete: Fly Home", tag:"Departure 10:10. Legendary Explorer status: confirmed.",
+ plan:[{t:"07:00",p:"To the airport",w:"allow time for traffic"},{t:"10:10",p:"Take-off 🏆",w:"fly home as legends"},{t:"16:00",p:"Land in London",w:"6-hour time-travel back"}],
+ missions:["Airport by 07:00 — last chance for airport phở","Guard the pottery + lantern like treasure","Land in London and time-travel BACK 6 hours","Show everyone the passport stamps in this guide","Start the campaign for the next family adventure 😏"],
+ fact:"Fun souvenir maths: your handmade pot, your silk lantern, your tailored outfit and roughly 4,000 photos. Total adventure value: priceless.",
+ quote:{type:"kid", text:"Operation Vietnam: COMPLETE. Requesting new mission immediately.", who:"— Junior Explorer Club ✦ imagined"}}
+];
+
+/* ================= RENDER ================= */
+const guide = document.getElementById('guide');
+const stampGrid = document.getElementById('stampGrid');
+const _n = new Date();
+const todayStr = `${_n.getFullYear()}-${String(_n.getMonth()+1).padStart(2,'0')}-${String(_n.getDate()).padStart(2,'0')}`;
+let lastCity = null;
+
+DAYS.forEach((day,i)=>{
+  const c = CITIES[day.city];
+  if(day.city !== lastCity){
+    lastCity = day.city;
+    const ch = document.createElement('div');
+    ch.className='chapter';
+    ch.innerHTML = `
+      <div class="city-head" style="--accent:${c.accent}">
+        <span class="flag">${c.flag}</span>
+        <h2>${c.name}</h2>
+        <span class="nights">${c.nights}</span>
+      </div>
+      <p class="city-sub">${c.sub}</p>`;
+    guide.appendChild(ch);
+  }
+  const wrap = document.createElement('div');
+  wrap.className='chapter';
+  const isToday = day.d === todayStr;
+  const card = document.createElement('article');
+  card.className='day-card'+(isToday?' today':'');
+  card.style.setProperty('--accent', c.accent);
+  card.dataset.index = i;
+  card.id = 'day-'+i;
+
+  const missionsHtml = day.missions.map((m,mi)=>`
+    <li data-day="${i}" data-m="${mi}" role="checkbox" aria-checked="false" tabindex="0">
+      <span class="box"></span><span class="txt">${m}</span>
+    </li>`).join('');
+
+  const q = day.quote ? `
+    <div class="quote ${day.quote.type}">
+      ${day.quote.type==='real' ? '💬 ' : '🧭 '}${day.quote.text}
+      <span class="who">${day.quote.who}</span>
+    </div>` : '';
+
+  card.innerHTML = `
+    ${isToday?'<div class="today-badge">📍 TODAY</div>':''}
+    <div class="photo" id="photo-${i}">
+      ${day.img ? `<img src="${day.img}" alt="${day.title}" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest('.photo').innerHTML='<span class=\\'fallback\\'>${day.emoji}</span>'" /><span class="credit">📷 Wikimedia Commons</span>` : `<span class="fallback">${day.emoji}</span>`}
+    </div>
+    <div class="stamp-hint">complete all<br>missions to<br>earn stamp</div>
+    <div class="stamp-slot"><div class="stamp">
+      <span class="big">${day.emoji}</span>
+      <span>${c.name.toUpperCase()}</span>
+      <span>${day.label}</span>
+      <span>★ VISITED ★</span>
+    </div></div>
+    <div class="card-body">
+      <div class="date-row">
+        <span class="date-pill">DAY ${String(i+1).padStart(2,'0')} · ${day.label}</span>
+        <span class="city-pill">${c.flag} ${c.name}</span>
+      </div>
+      <h3>${day.title}</h3>
+      <p class="tagline">${day.tag}</p>
+      <h4 class="sect">📋 The plan</h4>
+      <div class="plan">${(day.plan||[]).map(p=>`
+        <div class="plan-row">
+          <span class="ptime">${p.t}</span>
+          <div class="ptxt"><b>${p.p}</b><span class="pw"> — ${p.w}</span></div>
+        </div>`).join('')}
+      </div>
+      <h4 class="sect">✅ Missions</h4>
+      <ul class="missions">${missionsHtml}</ul>
+      ${day.alts ? `<h4 class="sect">✨ If you want more</h4>
+      <ul class="alts">${day.alts.map(a=>`<li><span class="star">◆</span><span>${a}</span></li>`).join('')}</ul>` : ''}
+      <div class="funfact"><b>WAIT, WHAT?!</b> ${day.fact}</div>
+      ${q}
+    </div>`;
+  wrap.appendChild(card);
+  guide.appendChild(wrap);
+
+  // passport wall stamp
+  const p = document.createElement('div');
+  p.className='pstamp'; p.id='pstamp-'+i;
+  p.innerHTML = `<span class="big">${day.emoji}</span><span>DAY ${i+1}</span>`;
+  stampGrid.appendChild(p);
+});
+
+/* ================= INTERACTION (shared persistent state via GitHub Gist) ================= */
+/* ▼▼▼ EDIT THESE TWO LINES — see setup instructions ▼▼▼ */
+const GIST_ID = "fbf8b8f00df65611720454fa11c3fbff";
+const GITHUB_TOKEN = "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";
+/* ▲▲▲ Everything below this can stay as-is ▲▲▲ */
+
+const GIST_FILE = 'progress.json';
+let state = DAYS.map(d=>d.missions.map(()=>false));
+let storageReady = false;
+const configured = GIST_ID && GITHUB_TOKEN && !GIST_ID.startsWith('PASTE_') && !GITHUB_TOKEN.startsWith('PASTE_');
+
+function syncBadge(text, tone){
+  let b = document.getElementById('syncBadge');
+  if(!b){
+    b = document.createElement('div');
+    b.id = 'syncBadge';
+    b.style.cssText = 'position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:60;'
+      + 'font-family:Space Mono,monospace;font-size:11.5px;padding:8px 14px;border-radius:99px;'
+      + 'box-shadow:0 6px 16px rgba(0,0,0,.28);max-width:92vw;text-align:center;transition:opacity .3s;color:#fff;';
+    document.body.appendChild(b);
+  }
+  const colors = {info:'#1B2A4A', ok:'#2FA98C', warn:'#FF5A3C'};
+  b.style.background = colors[tone] || colors.info;
+  b.textContent = text;
+  b.style.opacity = '1';
+  clearTimeout(b._t);
+  if(tone !== 'warn'){
+    b._t = setTimeout(()=>{ b.style.opacity='0'; }, 2200);
+  }
+}
+
+async function loadState(){
+  if(!configured){
+    syncBadge('⚠️ Sync not set up yet — see setup instructions in the code', 'warn');
+    storageReady = false;
+    return;
+  }
+  syncBadge('🔄 Loading shared progress…', 'info');
+  try{
+    const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      headers: { 'Accept': 'application/vnd.github+json' }
+    });
+    if(res.ok){
+      const gist = await res.json();
+      const file = gist.files && gist.files[GIST_FILE];
+      if(file && file.content){
+        const parsed = JSON.parse(file.content);
+        if(Array.isArray(parsed) && parsed.length === DAYS.length){
+          state = parsed;
+        }
+      }
+      syncBadge('✅ Synced — everyone with this link shares this progress', 'ok');
+    }else{
+      syncBadge('⚠️ Could not load progress (check Gist ID)', 'warn');
+    }
+  }catch(e){
+    syncBadge('⚠️ Offline — showing local progress only', 'warn');
+  }
+  storageReady = true;
+  DAYS.forEach((_,i)=>{
+    state[i].forEach((val,m)=>{
+      const li = document.querySelector(`.missions li[data-day="${i}"][data-m="${m}"]`);
+      if(li && val){
+        li.classList.add('done');
+        li.setAttribute('aria-checked','true');
+        li.querySelector('.box').textContent = '✓';
+      }
+    });
+    refreshDay(i);
+  });
+}
+
+let saveTimer = null;
+function saveStateDebounced(){
+  if(!configured) return;
+  clearTimeout(saveTimer);
+  syncBadge('💾 Saving…', 'info');
+  saveTimer = setTimeout(async ()=>{
+    try{
+      const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+        method: 'PATCH',
+        headers: {
+          'Accept': 'application/vnd.github+json',
+          'Authorization': `token ${GITHUB_TOKEN}`
+        },
+        body: JSON.stringify({
+          files: { [GIST_FILE]: { content: JSON.stringify(state) } }
+        })
+      });
+      if(res.ok){ syncBadge('✅ Saved for everyone with this link', 'ok'); }
+      else{ syncBadge('⚠️ Save failed — check token/Gist ID', 'warn'); }
+    }catch(e){
+      syncBadge('⚠️ Save failed — check connection', 'warn');
+    }
+  }, 600);
+}
+
+function refreshDay(i){
+  const card = document.querySelector(`.day-card[data-index="${i}"]`);
+  const done = state[i].every(Boolean);
+  card.classList.toggle('stamped', done);
+  document.getElementById('pstamp-'+i).classList.toggle('earned', done);
+  const total = state.filter(day=>day.every(Boolean)).length;
+  document.getElementById('progressFill').style.width = (total/DAYS.length*100)+'%';
+  document.getElementById('stampCount').textContent = `${total} / ${DAYS.length} stamps`;
+  document.getElementById('passport').classList.toggle('complete', total===DAYS.length);
+  const p=document.getElementById('dnav-'+i);
+  if(p) p.classList.toggle('done', state[i].every(Boolean));
+}
+
+function toggle(li){
+  const i=+li.dataset.day, m=+li.dataset.m;
+  state[i][m]=!state[i][m];
+  li.classList.toggle('done', state[i][m]);
+  li.setAttribute('aria-checked', state[i][m]);
+  li.querySelector('.box').textContent = state[i][m] ? '✓' : '';
+  refreshDay(i);
+  if(storageReady) saveStateDebounced();
+}
+guide.addEventListener('click', e=>{
+  const li = e.target.closest('.missions li'); if(li) toggle(li);
+});
+guide.addEventListener('keydown', e=>{
+  if(e.key===' '||e.key==='Enter'){
+    const li = e.target.closest('.missions li');
+    if(li){ e.preventDefault(); toggle(li); }
+  }
+});
+loadState();
+
+/* ================= DATE NAVIGATOR ================= */
+const dnavInner = document.getElementById('datenavInner');
+DAYS.forEach((day,i)=>{
+  const c = CITIES[day.city];
+  const pill = document.createElement('div');
+  pill.className = 'dnav-pill'+(day.d===todayStr?' today':'');
+  pill.id = 'dnav-'+i;
+  pill.style.setProperty('--accent', c.accent);
+  const dayLabel = day.label.replace(/^[A-Z…]+\s/,''); // "8 JUL"
+  pill.innerHTML = `<span class="emo">${day.emoji}</span><b>${i+1}</b><small>${dayLabel}</small>`;
+  pill.addEventListener('click', ()=>{
+    const el = document.getElementById('day-'+i);
+    const y = el.getBoundingClientRect().top + window.pageYOffset - 88;
+    window.scrollTo({top:y, behavior:'smooth'});
+  });
+  dnavInner.appendChild(pill);
+});
+
+function setActivePill(i){
+  document.querySelectorAll('.dnav-pill').forEach(p=>p.classList.remove('active'));
+  const active = document.getElementById('dnav-'+i);
+  if(active){
+    active.classList.add('active');
+    // keep active pill in view within the strip
+    const strip = dnavInner;
+    const pl = active.offsetLeft, pw = active.offsetWidth;
+    const target = pl - strip.clientWidth/2 + pw/2;
+    strip.scrollTo({left:target, behavior:'smooth'});
+  }
+}
+
+// Scroll-spy: highlight whichever day card is nearest the top
+let spyTicking=false;
+window.addEventListener('scroll', ()=>{
+  if(spyTicking) return; spyTicking=true;
+  requestAnimationFrame(()=>{
+    let best=0, bestDist=Infinity;
+    DAYS.forEach((_,i)=>{
+      const el=document.getElementById('day-'+i);
+      if(!el) return;
+      const d=Math.abs(el.getBoundingClientRect().top - 120);
+      if(d<bestDist){bestDist=d; best=i;}
+    });
+    setActivePill(best);
+    spyTicking=false;
+  });
+}, {passive:true});
+
+/* mark days complete in the nav too */
+const origRefresh = refreshDay;
+function markNavDone(i){
+  const done = state[i].every(Boolean);
+  const p=document.getElementById('dnav-'+i);
+  if(p) p.classList.toggle('done', done);
+}
+
+// On load, jump the strip to today (or day 1 before the trip)
+window.addEventListener('load', ()=>{
+  let idx = DAYS.findIndex(d=>d.d===todayStr);
+  if(idx<0) idx = 0;
+  setActivePill(idx);
+});
+
+/* ================= COUNTDOWN ================= */
+const DEPART = new Date('2026-07-08T18:55:00+01:00');
+const TRIP_END = new Date('2026-07-29T23:59:00+07:00');
+const cdEl = document.getElementById('countdown');
+const statusEl = document.getElementById('tripStatus');
+
+function tick(){
+  const now = new Date();
+  const diff = DEPART - now;
+  if(diff > 0){
+    const d=Math.floor(diff/864e5), h=Math.floor(diff/36e5)%24,
+          m=Math.floor(diff/6e4)%60, s=Math.floor(diff/1e3)%60;
+    cdEl.innerHTML = [['DAYS',d],['HOURS',h],['MINS',m],['SECS',s]]
+      .map(([l,v])=>`<div class="cd-box"><b>${v}</b><small>${l}</small></div>`).join('');
+    statusEl.textContent = '⏳ COUNTDOWN TO TAKE-OFF';
+  } else if(now <= TRIP_END){
+    const dayNum = Math.min(DAYS.length, Math.floor((now - new Date('2026-07-08T00:00:00+01:00'))/864e5)+1);
+    cdEl.innerHTML = `<div class="cd-box"><b>DAY ${dayNum}</b><small>OF ${DAYS.length}</small></div>`;
+    statusEl.textContent = '🎒 THE ADVENTURE IS LIVE — scroll to today!';
+  } else {
+    cdEl.innerHTML = `<div class="cd-box"><b>DONE!</b><small>LEGEND</small></div>`;
+    statusEl.textContent = '🏆 Operation Vietnam: complete.';
+  }
+}
+tick(); setInterval(tick,1000);
+
+/* Photos are now hardcoded directly per-day (see img field above) — no live fetching needed. */
+</script>
+</body>
+</html>
